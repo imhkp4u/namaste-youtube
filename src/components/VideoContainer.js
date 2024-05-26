@@ -25,19 +25,20 @@ const VideoContainer = () => {
 
   return (
     <div className="flex flex-wrap  justify-center">
-      {videos.map((video, index) => (
-        <Link
-          key={index}
-          to={`/watch?v=${
-            video.id["videoId"] ? video.id["videoId"] : video.id
-          }`}
-        >
-          <VideoCard
-            key={video.id ? video.id : video.id.videoId}
-            info={video}
-          />
-        </Link>
-      ))}
+      {videos &&
+        videos.map((video, index) => (
+          <Link
+            key={index}
+            to={`/watch?v=${
+              video.id["videoId"] ? video.id["videoId"] : video.id
+            }`}
+          >
+            <VideoCard
+              key={video.id ? video.id : video.id.videoId}
+              info={video}
+            />
+          </Link>
+        ))}
     </div>
   );
 };

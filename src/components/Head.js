@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleMenu } from "../utils/appSlice";
-import { YOUTUBE_SEARCH_API } from "../utils/constants";
-import { cacheResults } from "../utils/searchSlice";
+import {
+  YOUTUBE_SEARCH_API,
+  getYouTubeSearchQueryApi,
+} from "../utils/constants";
+import {
+  cacheResults,
+  setVideoResultFromSuggestion,
+} from "../utils/searchSlice";
 
 const Head = () => {
   const dispatch = useDispatch();
@@ -12,7 +18,6 @@ const Head = () => {
 
   const searchCache = useSelector((store) => store.search);
   useEffect(() => {
-    console.log(searchQuery);
     const timer = setTimeout(() => {
       if (searchCache[searchQuery]) {
         setShowSuggestions(searchCache[searchQuery]);
@@ -34,6 +39,21 @@ const Head = () => {
         [searchQuery]: json[1],
       })
     );
+  };
+
+  const handleClickSuggestion = async (searchQuery) => {
+    setSearchQuery(searchQuery);
+    const apiUrl = getYouTubeSearchQueryApi(searchQuery);
+    const data = await fetch(apiUrl);
+    const json = await data.json();
+    dispatch(setVideoResultFromSuggestion(json.items));
+    setShowSuggestions(false);
+  };
+
+  const handleInputBlur = () => {
+    setTimeout(() => {
+      setShowSuggestions(false);
+    }, 100); // Delay to allow suggestion click to be registered
   };
 
   const toggleMenuHandler = () => {
@@ -69,17 +89,26 @@ const Head = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
-            onBlur={() => setShowSuggestions(false)}
+            onBlur={handleInputBlur}
           />
+          {searchQuery && (
+            <img
+              src="https://icons.veryicon.com/png/o/miscellaneous/medium-thin-linear-icon/cross-23.png"
+              alt="Clear"
+              className="absolute inset-y-0 right-[697px] top-[28px] m-2 h-6 w-6 cursor-pointer"
+              onClick={() => setSearchQuery("")}
+            />
+          )}
           <button className="bg-gray-200 border border-gray-400 p-2 rounded-r-full">
             🔍
           </button>
         </div>
-        {showSuggestions && (
+        {showSuggestions && suggestions.length > 0 && (
           <div className="absolute bg-white py-2 px-2 w-[34.5rem] shadow-lg rounded-lg border border-x-gray-100">
             <ul>
               {suggestions.map((suggestion) => (
                 <li
+                  onMouseDown={() => handleClickSuggestion(suggestion)}
                   key={suggestion}
                   className="py-2 px-3 shadow-sm hover:bg-gray-100"
                 >

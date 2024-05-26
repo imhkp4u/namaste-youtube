@@ -9,3 +9,7 @@
 - Caching API results for further optimization
 - Comments section in watch page
 - Nested comment - N level deep
+- Dynamic video result from suggestions
+- Reused Video Container component
+- clear search query using cross button
+- Adding .env file and added to gitignore

@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const VideoContainer = () => {
-  const isMenuOpen = useSelector((store) => store.app.isMenuOpen);
   const [videos, setVideos] = useState([]);
   const getVideos = async () => {
     const data = await fetch(YOUTUBE_VIDEOS_API);
@@ -13,14 +12,30 @@ const VideoContainer = () => {
     setVideos(json.items);
   };
 
+  const videoItems = useSelector(
+    (store) => store.search.videoItemsFromSuggestion
+  );
   useEffect(() => {
-    getVideos();
-  }, []);
+    if (videoItems?.length === 0) {
+      getVideos();
+    } else {
+      setVideos(videoItems);
+    }
+  }, [videoItems]);
+
   return (
     <div className="flex flex-wrap  justify-center">
-      {videos.map((video) => (
-        <Link key={video.id} to={"/watch?v=" + video.id}>
-          <VideoCard key={video.id} info={video} />
+      {videos.map((video, index) => (
+        <Link
+          key={index}
+          to={`/watch?v=${
+            video.id["videoId"] ? video.id["videoId"] : video.id
+          }`}
+        >
+          <VideoCard
+            key={video.id ? video.id : video.id.videoId}
+            info={video}
+          />
         </Link>
       ))}
     </div>

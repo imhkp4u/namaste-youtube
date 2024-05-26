@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 const VideoCard = ({ info }) => {
-  const { snippet, statistics } = info;
+  const { snippet, statistics = {} } = info;
   const { channelTitle, title, thumbnails } = snippet;
 
   const isMenuOpen = useSelector((store) => store.app.isMenuOpen);
@@ -31,7 +31,7 @@ const VideoCard = ({ info }) => {
     }
   };
 
-  const formattedViews = formatViews(statistics.viewCount);
+  const formattedViews = formatViews(statistics?.viewCount || "N/A");
   const timeAgoFormatted = timeAgo(snippet.publishedAt);
 
   return (

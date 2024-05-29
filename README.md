@@ -1,4 +1,4 @@
-![Project Demo](videos/Youtube_Project_Demo.mp4)
+![Project Demo](video/Youtube_Project_Demo.mp4)
 
 - Youtube Home page
 - Sidenav
